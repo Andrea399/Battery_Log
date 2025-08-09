@@ -1,3 +1,24 @@
 <resources>
-    <string name="app_name">Battery Log</string>
+    <string name="app_name">BatteryLog</string>
+    <string name="add_entry">Add charging entry</string>
+    <string name="save">Save</string>
+    <string name="date">Date</string>
+    <string name="total_km_i">Total Km</string>
+    <string name="enter_total_km">Please enter total kilometers</string>
+    <string name="invalid_km_value">Invalid kilometers value</string>
+
+    <string name="km_since_last">Km: %.1f</string>
+    <string name="days_since_last">Days: %d</string>
+    <string name="km_per_day">Km/day: %.1f</string>
+    <string name="total_km">Total: %.1f km</string>
+
+    <string name="export">Export CSV</string>
+    <string name="import_csv">Import CSV</string>
+    <string name="import_success">Importazione completata. %1$d voci importate.</string>
+    <string name="export_success">Esportazione completata: %1$s</string>
+    <string name="export_failed">Esportazione fallita: %1$s</string>
+    <string name="import_failed">Importazione fallita: %1$s</string>
+    <string name="operation_success">Operazione completata</string>
+    <string name="operation_failed">Operazione fallita</string>
+
 </resources>

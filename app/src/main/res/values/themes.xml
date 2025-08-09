@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.BatteryLog" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Colori principali -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/white</item>
 
-    <style name="Theme.BatteryLog" parent="android:Theme.Material.Light.NoActionBar" />
+        <!-- Assicurati che queste proprietà siano impostate -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <!-- Altri attributi del tema se necessario -->
+    </style>
+
 </resources>

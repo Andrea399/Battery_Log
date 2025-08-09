@@ -1,0 +1,31 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#FF6200EE">  <!-- Colore viola Material Design -->
+
+    <group android:translateX="2">
+        <!-- Contorno batteria -->
+        <path
+            android:fillColor="@android:color/transparent"
+            android:strokeColor="#FF6200EE"
+            android:strokeWidth="1.5"
+            android:pathData="M1,6v12h15v-12z"/>
+
+        <!-- Terminale batteria -->
+        <path
+            android:fillColor="#FF6200EE"
+            android:pathData="M16,9v6h3v-6z"/>
+
+        <!-- Livello carica (40%) -->
+        <path
+            android:fillColor="#FF6200EE"
+            android:pathData="M3,9v6h9v-6z"/>
+
+        <!-- Simbolo + -->
+        <path
+            android:fillColor="#FF6200EE"
+            android:pathData="M17,3v3m-1.5,1.5h3"/>
+    </group>
+</vector>

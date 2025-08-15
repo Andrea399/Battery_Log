@@ -63,7 +63,7 @@ class BatteryRepository(private val batteryDao: BatteryDao) {
     suspend fun getPreviousEntry(beforeDate: Long): BatteryEntry? {
         return batteryDao.getEntryBeforeDate(beforeDate)
     }
-    suspend fun getEntryById(id: Long): BatteryEntry? {
+    suspend fun getEntryById(id: Int): BatteryEntry? {
         return batteryDao.getEntryById(id)
     }
 

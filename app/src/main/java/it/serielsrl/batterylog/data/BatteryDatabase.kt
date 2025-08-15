@@ -33,8 +33,11 @@ interface BatteryDao {
 
     @Query("SELECT * FROM battery_entries ORDER BY date DESC")
     fun getAllEntries(): Flow<List<BatteryEntry>>
-
+/*
     @Query("SELECT * FROM battery_entries WHERE id != (SELECT MAX(id) FROM battery_entries) ORDER BY date DESC LIMIT 1")
+    suspend fun getPreviousEntry(): BatteryEntry?
+*/
+    @Query("SELECT * FROM battery_entries ORDER BY date DESC LIMIT 1")
     suspend fun getPreviousEntry(): BatteryEntry?
 
     @Query("DELETE FROM battery_entries")
@@ -44,7 +47,7 @@ interface BatteryDao {
     suspend fun getEntryBeforeDate(beforeDate: Long): BatteryEntry?
 
     @Query("SELECT * FROM battery_entries WHERE id = :id LIMIT 1")
-    suspend fun getEntryById(id: Long): BatteryEntry?
+    suspend fun getEntryById(id: Int): BatteryEntry?
 
     @Update
     suspend fun update(entry: BatteryEntry)

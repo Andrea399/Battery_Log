@@ -4,7 +4,7 @@
     package="it.serielsrl.batterylog">
 
     <!-- Rimuovi permessi duplicati e permessi non necessari -->
-
+    <!--uses-permission android:name="android.permission.FOREGROUND_SERVICE" /-->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"

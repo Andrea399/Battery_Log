@@ -1,5 +1,6 @@
 package it.serielsrl.batterylog.ui.adapters
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -8,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import it.serielsrl.batterylog.R
 import it.serielsrl.batterylog.data.BatteryEntry
 import it.serielsrl.batterylog.databinding.ItemBatteryEntryBinding
-import java.util.Locale
+import it.serielsrl.batterylog.ui.AddEntryActivity
 
 class BatteryAdapter : ListAdapter<BatteryEntry, BatteryAdapter.BatteryViewHolder>(DiffCallback()) {
 
@@ -29,6 +30,7 @@ class BatteryAdapter : ListAdapter<BatteryEntry, BatteryAdapter.BatteryViewHolde
 
     class BatteryViewHolder(private val binding: ItemBatteryEntryBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
         fun bind(currentEntry: BatteryEntry, previousEntry: BatteryEntry?) {
             binding.apply {
                 tvDate.text = currentEntry.getFormattedDate()
@@ -48,6 +50,15 @@ class BatteryAdapter : ListAdapter<BatteryEntry, BatteryAdapter.BatteryViewHolde
                     R.string.km_per_day,
                     currentEntry.kmPerDay
                 )
+            }
+
+            // Click per modificare l'entry
+            binding.root.setOnClickListener {
+                val context = binding.root.context
+                val intent = Intent(context, AddEntryActivity::class.java).apply {
+                    putExtra(AddEntryActivity.EXTRA_ENTRY_ID, currentEntry.id)
+                }
+                context.startActivity(intent)
             }
         }
     }

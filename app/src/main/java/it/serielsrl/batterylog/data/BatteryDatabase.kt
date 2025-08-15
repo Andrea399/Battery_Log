@@ -42,4 +42,14 @@ interface BatteryDao {
 
     @Query("SELECT * FROM battery_entries WHERE date < :beforeDate ORDER BY date DESC LIMIT 1")
     suspend fun getEntryBeforeDate(beforeDate: Long): BatteryEntry?
+
+    @Query("SELECT * FROM battery_entries WHERE id = :id LIMIT 1")
+    suspend fun getEntryById(id: Long): BatteryEntry?
+
+    @Update
+    suspend fun update(entry: BatteryEntry)
+
+    @Query("SELECT * FROM battery_entries ORDER BY date ASC")
+    suspend fun getAllSortedByDate(): List<BatteryEntry>
+
 }

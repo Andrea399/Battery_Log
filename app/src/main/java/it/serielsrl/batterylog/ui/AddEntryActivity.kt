@@ -17,15 +17,15 @@ import java.util.Date
 import java.util.Locale
 
 class AddEntryActivity : AppCompatActivity() {
+
+    companion object {
+        const val EXTRA_ENTRY_ID = "extra_entry_id"
+    }
+
     private lateinit var binding: ActivityAddEntryBinding
     private lateinit var repository: BatteryRepository
     private var selectedDate = Calendar.getInstance().timeInMillis
-
-    // Variabili per memorizzare i calcoli
-    private var kmSinceLast: Double = 0.0
-    private var daysSinceLast: Int = 0
-    private var kmPerDay: Double = 0.0
-    private var totalKm: Double =0.0
+    private var editingEntryId: Int? = null // ID entry che stiamo modificando
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,8 +35,16 @@ class AddEntryActivity : AppCompatActivity() {
         val database = BatteryDatabase.getDatabase(application)
         repository = BatteryRepository(database.batteryDao())
 
+        // Verifica se siamo in modalità modifica
+        editingEntryId = intent.getIntExtra(EXTRA_ENTRY_ID, -1).takeIf { it != -1 }
+
         setupDatePicker()
         setupForm()
+
+        // Se stiamo modificando, carica i dati
+        if (editingEntryId != null) {
+            loadEntryData(editingEntryId!!)
+        }
     }
 
     private fun setupDatePicker() {
@@ -72,57 +80,77 @@ class AddEntryActivity : AppCompatActivity() {
         updateCalculations()
     }
 
+    private fun loadEntryData(entryId: Int) {
+        lifecycleScope.launch {
+            val entry = repository.getEntryById(entryId)
+            entry?.let {
+                selectedDate = it.date
+                binding.etDate.setText(
+                    SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(it.date))
+                )
+                binding.etTotalKm.setText(it.totalKm.toString())
+                updateCalculations()
+            }
+        }
+    }
+
     private fun updateCalculations() {
         lifecycleScope.launch {
             val totalKmText = binding.etTotalKm.text.toString()
             if (totalKmText.isBlank()) return@launch
 
-            totalKm = totalKmText.toDoubleOrNull() ?: return@launch
+            val totalKm = totalKmText.toDoubleOrNull() ?: return@launch
             val previousEntry = repository.getPreviousEntry(selectedDate)
 
-            kmSinceLast = BatteryEntry.calculateKmSinceLastEntry(
+            val kmSinceLast = BatteryEntry.calculateKmSinceLastEntry(
                 BatteryEntry(0, selectedDate, totalKm),
                 previousEntry
             )
-            daysSinceLast = BatteryEntry.calculateDaysSinceLastEntry(
+            val daysSinceLast = BatteryEntry.calculateDaysSinceLastEntry(
                 BatteryEntry(0, selectedDate, totalKm),
                 previousEntry
             )
-            kmPerDay = BatteryEntry.calculateKmPerDay(kmSinceLast, daysSinceLast)
+            val kmPerDay = BatteryEntry.calculateKmPerDay(kmSinceLast, daysSinceLast)
 
             binding.tvKmSinceLast.text = getString(R.string.km_since_last, kmSinceLast)
             binding.tvDaysSinceLast.text = getString(R.string.days_since_last, daysSinceLast)
             binding.tvKmPerDay.text = getString(R.string.km_per_day, kmPerDay)
         }
     }
+
     private fun saveEntry() {
-        /*val totalKmText = binding.etTotalKm.text.toString()
+        val totalKmText = binding.etTotalKm.text.toString()
         if (totalKmText.isBlank()) {
             Toast.makeText(this, getString(R.string.enter_total_km), Toast.LENGTH_SHORT).show()
             return
         }
-*/
-        //totalKm = totalKmText.toDoubleOrNull()
-        if (totalKm == 0.toDouble()) {
+
+        val totalKm = totalKmText.toDoubleOrNull()
+        if (totalKm == null) {
             Toast.makeText(this, getString(R.string.invalid_km_value), Toast.LENGTH_SHORT).show()
             return
         }
 
         lifecycleScope.launch {
-            val entry = BatteryEntry(
-                date = selectedDate,
-                totalKm = totalKm,
-                kmSinceLast= kmSinceLast,
-                daysSinceLast = daysSinceLast,
-                kmPerDay = kmPerDay
-                // Gli altri valori verranno calcolati automaticamente
-            )
-
-            //repository.insertWithCalculatedFields(entry)
-            repository.insert(entry)
-
+            if (editingEntryId != null) {
+                // Aggiorna la entry e ricalcola tutte quelle successive
+                repository.updateWithRecalculation(
+                    BatteryEntry(
+                        id = editingEntryId!!,
+                        date = selectedDate,
+                        totalKm = totalKm
+                    )
+                )
+            } else {
+                // Inserisce una nuova entry
+                repository.insertWithCalculatedFields(
+                    BatteryEntry(
+                        date = selectedDate,
+                        totalKm = totalKm
+                    )
+                )
+            }
             finish()
         }
     }
-
 }
